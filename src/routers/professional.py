@@ -15,23 +15,23 @@ from pymongo import MongoClient
 
 # from src.auth.authentication import get_role_permission
 # from src.auth.authorization import authorize
-from src.schemas.faq import *
+from src.schemas.professional import *
 from src.utils.database import get_database
 from src.utils.stages import *
 
-faq_router = APIRouter(prefix="/faq")
+professional_router = APIRouter(prefix="/professional")
 
 
-@faq_router.post("/add", tags=["FAQ"], response_model=None)
+@professional_router.post("/add", tags=["Professional"], response_model=None)
 # @authorize(
 #     [
 #         "PERMISSIONS",
 #         "Admin.All.All",
 #     ]
 # )
-async def add_faq(
+async def add_professional(
         request: Request,
-        afaqi: AddFAQIn,
+        aprofessionali: AddProfessionalIn,
         database: MongoClient = Depends(get_database),
         # role_perm: dict = Depends(get_role_permission),
 ):
@@ -48,19 +48,19 @@ async def add_faq(
         _type_: _description_
     """
     # user_id = role_perm["sub"]
-    coll = database["FAQ"]
-    if afaqi.FAQID is None:
+    coll = database["Professional"]
+    if aprofessionali.ProfessionalID is None:
         raise RequestValidationError(TypeError, body={"code": "30003", "status": 412})
-    filter = {"FAQID": afaqi.FAQID}
+    filter = {"ProfessionalID": aprofessionali.ProfessionalID}
     update = {"$set": {}}
     update["$set"]["AddDate"] = jd.today().strftime("%Y-%m-%d")
-    for key, value in vars(afaqi).items():
+    for key, value in vars(aprofessionali).items():
         if value is not None:
             update["$set"][key] = value
-    # if afaqi.AddDate:
+    # if aprofessionali.AddDate:
     #     try:
     #         StartDate = (
-    #             jd(datetime.strptime(afaqi.AddDate, "%Y-%m-%d")).date().isoformat()
+    #             jd(datetime.strptime(aprofessionali.AddDate, "%Y-%m-%d")).date().isoformat()
     #         )
     #     except:
     #         raise RequestValidationError(
@@ -68,12 +68,12 @@ async def add_faq(
     #         )
 
     update["$set"]["CreateDateTime"] = str(datetime.now())
-    update["$set"]["SysFAQID"] = uuid.uuid1().hex
-    update["$set"]["FAQType"] = FAQType[
-        afaqi.FAQType.value
+    update["$set"]["SysProfessionalID"] = uuid.uuid1().hex
+    update["$set"]["ProfessionalType"] = ProfessionalType[
+        aprofessionali.ProfessionalType.value
     ]
-    update["$set"]["FAQCategory"] = FAQCategory[
-        afaqi.FAQCategory.value
+    update["$set"]["ProfessionalCategory"] = ProfessionalCategory[
+        aprofessionali.ProfessionalCategory.value
     ]
     update["$set"]["UpdateDateTime"] = str(datetime.now())
     update["$set"]["IsDeleted"] = False
@@ -82,7 +82,7 @@ async def add_faq(
         coll.insert_one(update["$set"])
     except:
         raise RequestValidationError(TypeError, body={"code": "30004", "status": 409})
-    query_result = coll.find_one({"FAQID": afaqi.FAQID}, {"_id": False})
+    query_result = coll.find_one({"ProfessionalID": aprofessionali.ProfessionalID}, {"_id": False})
 
     resp = {
         "result": query_result,
@@ -95,9 +95,9 @@ async def add_faq(
     return JSONResponse(status_code=200, content=resp)
 
 
-@faq_router.put(
+@professional_router.put(
     "/modify",
-    tags=["FAQ"],
+    tags=["Professional"],
 )
 # @authorize(
 #     [
@@ -105,9 +105,9 @@ async def add_faq(
 #         "Admin.All.All",
 #     ]
 # )
-async def modify_faq(
+async def modify_professional(
         request: Request,
-        afaqi: ModifyFAQIn,
+        aprofessionali: ModifyProfessionalIn,
         database: MongoClient = Depends(get_database),
         # role_perm: dict = Depends(get_role_permission),
 ):
@@ -124,18 +124,18 @@ async def modify_faq(
         _type_: _description_
     """
     # user_id = role_perm["sub"]
-    coll = database["FAQ"]
-    if afaqi.FAQID is None:
+    coll = database["Professional"]
+    if aprofessionali.ProfessionalID is None:
         raise RequestValidationError(TypeError, body={"code": "30003", "status": 412})
-    filter = {"FAQID": afaqi.FAQID}
+    filter = {"ProfessionalID": aprofessionali.ProfessionalID}
     update = {"$set": {}}
-    for key, value in vars(afaqi).items():
+    for key, value in vars(aprofessionali).items():
         if value is not None:
             update["$set"][key] = value
-    if afaqi.AddDate:
+    if aprofessionali.AddDate:
         try:
             StartDate = (
-                jd(datetime.strptime(afaqi.AddDate, "%Y-%m-%d")).date().isoformat()
+                jd(datetime.strptime(aprofessionali.AddDate, "%Y-%m-%d")).date().isoformat()
             )
         except:
             raise RequestValidationError(
@@ -145,7 +145,7 @@ async def modify_faq(
     update["$set"]["UpdateDateTime"] = str(datetime.now())
     update["$set"]["IsDeleted"] = False
     coll.update_one(filter, update)
-    query_result = coll.find_one({"FAQID": afaqi.FAQID}, {"_id": False})
+    query_result = coll.find_one({"ProfessionalID": aprofessionali.ProfessionalID}, {"_id": False})
     if not query_result:
         raise RequestValidationError(TypeError, body={"code": "30001", "status": 404})
     resp = {
@@ -159,9 +159,9 @@ async def modify_faq(
     return JSONResponse(status_code=200, content=resp)
 
 
-@faq_router.get(
+@professional_router.get(
     "/search",
-    tags=["FAQ"],
+    tags=["Professional"],
 )
 # @authorize(
 #     [
@@ -169,9 +169,9 @@ async def modify_faq(
 #         "Admin.All.All",
 #     ]
 # )
-async def search_faq(
+async def search_professional(
         request: Request,
-        args: SearchFAQIn = Depends(SearchFAQIn),
+        args: SearchProfessionalIn = Depends(SearchProfessionalIn),
         database: MongoClient = Depends(get_database),
         # role_perm: dict = Depends(get_role_permission),
 ):
@@ -196,27 +196,25 @@ async def search_faq(
     #     pass
     # else:
     #     raise HTTPException(status_code=403, detail="Not authorized.")
-    coll = database["FAQ"]
+    coll = database["Professional"]
     upa = []
 
-    if args.FAQID:
-        upa.append({"FAQID": args.FAQID})
-    if args.SysFAQID:
-        upa.append({"SysFAQID": args.SysFAQID})
-    if args.FAQNumber:
-        upa.append({"FAQNumber": args.FAQNumber})
+    if args.ProfessionalID:
+        upa.append({"ProfessionalID": args.ProfessionalID})
+    if args.SysProfessionalID:
+        upa.append({"SysProfessionalID": args.SysProfessionalID})
+    if args.ProfessionalNumber:
+        upa.append({"ProfessionalNumber": args.ProfessionalNumber})
     if args.Description:
         upa.append({"Description": args.Description})
-    if args.FAQType:
-        upa.append({"FAQType": FAQType[args.FAQType.value]})
-    if args.FAQCategory:
+    if args.ProfessionalType:
+        upa.append({"ProfessionalType": ProfessionalType[args.ProfessionalType.value]})
+    if args.ProfessionalCategory:
         upa.append(
-            {"FAQCategory": FAQCategory[args.FAQCategory.value]}
+            {"ProfessionalCategory": ProfessionalCategory[args.ProfessionalCategory.value]}
         )
-    if args.Question:
-        upa.append({"Question": {"$regex": args.Question}})
-    if args.Answer:
-        upa.append({"Answer": {"$regex": args.Answer}})
+    if args.Word:
+        upa.append({"Word": {"$regex": args.Word}})
     # if args.AddDate:
     #     upa.append({"AddDate": {"$lte": args.AddDate}})
     if args.AddDate:
@@ -254,9 +252,9 @@ async def search_faq(
     return JSONResponse(status_code=200, content=resp)
 
 
-@faq_router.delete(
+@professional_router.delete(
     "/delete",
-    tags=["FAQ"],
+    tags=["Professional"],
 )
 # @authorize(
 #     [
@@ -264,9 +262,9 @@ async def search_faq(
 #         "Admin.All.All",
 #     ]
 # )
-async def delete_faq(
+async def delete_professional(
         request: Request,
-        args: DelFAQIn = Depends(DelFAQIn),
+        args: DelProfessionalIn = Depends(DelProfessionalIn),
         database: MongoClient = Depends(get_database),
         # role_perm: dict = Depends(get_role_permission),
 ):
@@ -283,16 +281,16 @@ async def delete_faq(
         _type_: _description_
     """
     # user_id = role_perm["sub"]
-    coll = database["FAQ"]
-    if args.SysFAQID:
+    coll = database["Professional"]
+    if args.SysProfessionalID:
         pass
     else:
         raise RequestValidationError(TypeError, body={"code": "30003", "status": 400})
-    query_result = coll.find_one({"SysFAQID": args.SysFAQID}, {"_id": False})
+    query_result = coll.find_one({"SysProfessionalID": args.SysProfessionalID}, {"_id": False})
     if not query_result:
         raise RequestValidationError(TypeError, body={"code": "30001", "status": 404})
-    result = [f"مورد مربوط به سوال {query_result.get('Question')} پاک شد."]
-    coll.delete_one({"SysFAQID": args.SysFAQID})
+    result = [f"مورد مربوط به کلمه {query_result.get('Word')} پاک شد."]
+    coll.delete_one({"SysProfessionalID": args.SysProfessionalID})
     resp = {
         "result": result,
         "timeGenerated": jd.now().strftime("%Y-%m-%dT%H:%M:%S.%f"),
@@ -301,9 +299,9 @@ async def delete_faq(
     return JSONResponse(status_code=200, content=resp)
 
 
-@faq_router.put(
+@professional_router.put(
     "/modify-status",
-    tags=["FAQ"],
+    tags=["Professional"],
 )
 # @authorize(
 #     [
@@ -311,9 +309,9 @@ async def delete_faq(
 #         "Admin.All.All",
 #     ]
 # )
-async def modify_faq_status(
+async def modify_professional_status(
         request: Request,
-        dmci: DelFAQIn,
+        dmci: DelProfessionalIn,
         database: MongoClient = Depends(get_database),
         # role_perm: dict = Depends(get_role_permission),
 ):
@@ -330,16 +328,16 @@ async def modify_faq_status(
         _type_: _description_
     """
     # user_id = role_perm["sub"]
-    coll = database["FAQ"]
-    if dmci.SysFAQID is None:
+    coll = database["Professional"]
+    if dmci.SysProfessionalID is None:
         raise RequestValidationError(TypeError, body={"code": "30003", "status": 412})
-    filter = {"SysFAQID": dmci.SysFAQID}
-    query_result = coll.find_one({"SysFAQID": dmci.SysFAQID}, {"_id": False})
+    filter = {"SysProfessionalID": dmci.SysProfessionalID}
+    query_result = coll.find_one({"SysProfessionalID": dmci.SysProfessionalID}, {"_id": False})
     status = query_result.get("IsDeleted")
     update = {"$set": {}}
     update["$set"]["IsDeleted"] = bool(status ^ 1)
     coll.update_one(filter, update)
-    query_result = coll.find_one({"SysFAQID": dmci.SysFAQID}, {"_id": False})
+    query_result = coll.find_one({"SysProfessionalID": dmci.SysProfessionalID}, {"_id": False})
     if not query_result:
         raise RequestValidationError(TypeError, body={"code": "30001", "status": 404})
     return ResponseListOut(
@@ -349,4 +347,4 @@ async def modify_faq_status(
     )
 
 
-add_pagination(faq_router)
+add_pagination(professional_router)
