@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     ORIGINS: str = "5.34.200.221,37.114.196.41,37.114.196.42,37.114.196.43,37.114.196.45,37.114.196.46,37.114.196.47,37.114.196.48,46.209.118.50,46.209.118.51,46.209.118.52,46.209.118.53,46.209.118.54,46.209.118.55"  # "*"
     ROOT_PATH: str = ""
     SWAGGER_TITLE: str = "Insertions"
-    VERSION: str = "0.0.1"
+    VERSION: str = "1.0.0"
 
     APPLICATION_ID: str = "d7f48c21-2a19-4bdb-ace8-48928bff0eb5"
     # GRPC_IP: str = "37.32.8.187"
@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     DATE_STRING: str = "%Y-%m-%d"
     FASTAPI_DOCS: str = "/docs"
     FASTAPI_REDOC: str = "/redoc"
-    MONGO_CONNECTION_STRING: str = "mongodb://37.32.8.187:8081/?timeoutMS=20"
+    MONGO_CONNECTION_STRING: str = "mongodb://37.32.8.187:8081/"#?timeoutMS=20"
     MONGO_DATABASE: str = "Test"
     FAQ_COLLECTION: str = "FAQ"
     FORBIDDEN_WORDS_COLLECTION: str = "ForbiddenWords"
