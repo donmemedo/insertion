@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     DATE_STRING: str = "%Y-%m-%d"
     FASTAPI_DOCS: str = "/docs"
     FASTAPI_REDOC: str = "/redoc"
-    MONGO_CONNECTION_STRING: str = "mongodb://37.32.8.187:8081/"
+    MONGO_CONNECTION_STRING: str = "mongodb://37.32.8.187:8081/?timeoutMS=20"
     MONGO_DATABASE: str = "Test"
     FAQ_COLLECTION: str = "FAQ"
     FORBIDDEN_WORDS_COLLECTION: str = "ForbiddenWords"
