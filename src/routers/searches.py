@@ -69,7 +69,7 @@ async def search_forbidden(
     if any([x in args.Context for x in upa]):
         keywords = [y for y in upa if y in args.Context]
     else:
-        keywords = [""]
+        keywords = []
     result = {}
     result["code"] = "Null"
     result["message"] = "Null"
