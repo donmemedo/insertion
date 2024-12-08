@@ -38,5 +38,5 @@ class SortOrder(IntEnum):
 @dataclass
 class SearchIn:
     Context: str = None
-    size: int = Query(10, alias="PageSize")
-    page: int = Query(1, alias="PageNumber")
+    # size: int = Query(10, alias="PageSize")
+    # page: int = Query(1, alias="PageNumber")

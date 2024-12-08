@@ -3,11 +3,8 @@
 Returns:
     _type_: _description_
 """
-import uuid
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, Request
-from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi_pagination import add_pagination
 from khayyam import JalaliDatetime as jd
@@ -18,12 +15,14 @@ from pymongo import MongoClient
 from src.schemas.searches import *
 from src.utils.config import settings
 from src.utils.database import get_database
-from src.utils.stages import *
 
 search_router = APIRouter(prefix="/search", tags=["Search"])
 
 
-@search_router.get(
+# TODO: We uses PUT instead of GET because of Body using for Context
+
+
+@search_router.put(
     "/forbidden",
     tags=["Search"],
 )
@@ -35,7 +34,7 @@ search_router = APIRouter(prefix="/search", tags=["Search"])
 # )
 async def search_forbidden(
         request: Request,
-        args: SearchIn = Depends(SearchIn),
+        args: SearchIn,  # = Depends(SearchIn),
         database: MongoClient = Depends(get_database),
         # role_perm: dict = Depends(get_role_permission),
 ):
@@ -68,9 +67,9 @@ async def search_forbidden(
         upa.append(words[word]["Word"])
 
     if any([x in args.Context for x in upa]):
-        keywords=[y for y in upa if y in args.Context]
+        keywords = [y for y in upa if y in args.Context]
     else:
-        keywords=[""]
+        keywords = [""]
     result = {}
     result["code"] = "Null"
     result["message"] = "Null"
@@ -89,7 +88,7 @@ async def search_forbidden(
     return JSONResponse(status_code=200, content=resp)
 
 
-@search_router.get(
+@search_router.put(
     "/sensitive",
     tags=["Search"],
 )
@@ -101,7 +100,7 @@ async def search_forbidden(
 # )
 async def search_sensitive(
         request: Request,
-        args: SearchIn = Depends(SearchIn),
+        args: SearchIn,  # = Depends(SearchIn),
         database: MongoClient = Depends(get_database),
         # role_perm: dict = Depends(get_role_permission),
 ):
@@ -134,9 +133,9 @@ async def search_sensitive(
         upa.append(words[word]["Word"])
 
     if any([x in args.Context for x in upa]):
-        keywords=[y for y in upa if y in args.Context]
+        keywords = [y for y in upa if y in args.Context]
     else:
-        keywords=[""]
+        keywords = [""]
     result = {}
     result["code"] = "Null"
     result["message"] = "Null"
@@ -155,7 +154,7 @@ async def search_sensitive(
     return JSONResponse(status_code=200, content=resp)
 
 
-@search_router.get(
+@search_router.put(
     "/professional",
     tags=["Search"],
 )
@@ -167,7 +166,7 @@ async def search_sensitive(
 # )
 async def search_professional(
         request: Request,
-        args: SearchIn = Depends(SearchIn),
+        args: SearchIn,  # = Depends(SearchIn),
         database: MongoClient = Depends(get_database),
         # role_perm: dict = Depends(get_role_permission),
 ):
@@ -200,9 +199,9 @@ async def search_professional(
         upa.append(words[word]["Word"])
 
     if any([x in args.Context for x in upa]):
-        keywords=[y for y in upa if y in args.Context]
+        keywords = [y for y in upa if y in args.Context]
     else:
-        keywords=[""]
+        keywords = [""]
     result = {}
     result["code"] = "Null"
     result["message"] = "Null"
@@ -219,8 +218,6 @@ async def search_professional(
         },
     }
     return JSONResponse(status_code=200, content=resp)
-
-
 
 
 add_pagination(search_router)
