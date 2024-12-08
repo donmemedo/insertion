@@ -16,6 +16,7 @@ from src.routers.forbidden import forbidden_router
 from src.routers.professional import professional_router
 from src.routers.sensitive import sensitive_router
 from src.routers.tags import tags_router
+from src.routers.searches import search_router
 from src.utils.config import settings
 from src.utils.database import get_database
 from src.utils.errors import get_error
@@ -114,6 +115,7 @@ app.include_router(sensitive_router, prefix="")
 app.include_router(professional_router, prefix="")
 app.include_router(forbidden_router, prefix="")
 app.include_router(faq_router, prefix="")
+app.include_router(search_router, prefix="")
 
 if __name__ == "__main__":
-    uvicorn.run(app="main:app", host="0.0.0.0", port=80, log_config=dictConfig(logger))
+    uvicorn.run(app="main:app", host="0.0.0.0", port=80)#, log_config=dictConfig(logger))

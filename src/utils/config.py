@@ -35,9 +35,9 @@ class Settings(BaseSettings):
     MONGO_CONNECTION_STRING: str = "mongodb://37.32.8.187:8081/"#?timeoutMS=20"
     MONGO_DATABASE: str = "Test"
     FAQ_COLLECTION: str = "FAQ"
-    FORBIDDEN_WORDS_COLLECTION: str = "ForbiddenWords"
-    SENSITIVE_WORDS_COLLECTION: str = "SensitiveWords"
-    PROFESSIONAL_WORDS_COLLECTION: str = "ProfessionalWords"
+    FORBIDDEN_WORDS_COLLECTION: str = "Forbidden"#"ForbiddenWords"
+    SENSITIVE_WORDS_COLLECTION: str = "Sensitive"#"SensitiveWords"
+    PROFESSIONAL_WORDS_COLLECTION: str = "Professional"#"ProfessionalWords"
     TAGS_COLLECTION: str = "Tags"
 
     TOKEN_URL: str = "/token"
